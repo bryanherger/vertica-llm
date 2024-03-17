@@ -10,3 +10,8 @@ Connect to Vertica and define and build a training plan for vanna.ai by pulling 
 Then you can ask vanna using natural language.  Depending on the result, you may also get a chart.  ask() runs several commands to generate and execute SQL and try to visualize.  You can just run generate_sql() to get the SQL.
 
 The sample questions in the notebook all produce valid SQL and visuals.
+
+There are two Python scripts here: vertica_vanna.py defines some helper methods to train and use Vertica tables a bit more easily, and tester.py shows how to use the methods in vertica_vanna.py
+
+You can read more about how to use vanna.ai with Vertica in the following LinkedIn Articles:
+
