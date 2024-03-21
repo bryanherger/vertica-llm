@@ -1,6 +1,6 @@
 ## vanna-udx: Train and run vanna.ai hosted text-to-SQL LLM within Vertica
 
-This is a very lightweight set of UDX to access the hosted vanna.ai system.  The following commands are implemented:
+This is a very lightweight set of UDX to access the hosted vanna.ai system.  The following commands are implemented as Vertica SQL functions:
 * vannaGetTrainingDocs(apikey, model): wraps vn.generate_sql
 * vannaGetSql(apikey, model, question): wraps vn.generate_sql and returns filtered output, which is usually only SELECT statements.  For DDL, ETL, etc. use vannaGetRawSql.
 * vannaGetRawSql(apikey, model, question): wraps vn.generate_sql, but returns unfiltered result from LLM.  This function will return SQL other than SELECT statements.
