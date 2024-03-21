@@ -1,7 +1,8 @@
 \set apimodel '\''`echo $MODEL`'\''
 \set apikey '\''`echo $APIKEY`'\''
 -- Step 1: Create library
-CREATE LIBRARY VannaPyScalarFunctions AS '/home/azureuser/python/vanna-udx/VannaPyFunctions.py' LANGUAGE 'Python';
+DROP LIBRARY IF EXISTS VannaPyScalarFunctions CASCADE;
+CREATE LIBRARY VannaPyScalarFunctions AS '/home/bryan/python/vanna-udx/VannaPyFunctions.py' LANGUAGE 'Python';
 
 -- Step 2: Create functions
 CREATE FUNCTION vannaGetTrainingDocs AS NAME 'vannaGetTrainingDocs_factory' LIBRARY VannaPyScalarFunctions;
@@ -19,10 +20,10 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE PROCEDURE vanna_train_ddl(IN apikey VARCHAR, IN model VARCHAR, IN st varchar, OUT ddl varchar(64000)) LANGUAGE PLvSQL AS $$
+CREATE OR REPLACE PROCEDURE vanna_train_ddl(IN apikey VARCHAR, IN model VARCHAR, IN st varchar, OUT ddl varchar(64000), OUT res VARCHAR(64000)) LANGUAGE PLvSQL AS $$
 BEGIN
     ddl := EXECUTE 'SELECT EXPORT_OBJECTS('''','''||st||''')'; 
-    res <- EXECUTE SELECT vannaTrain('''||apikey||''','''||model||''',''ddl'','''||ddl||''')';
+    res <- EXECUTE 'SELECT vannaTrain('''||apikey||''','''||model||''',''ddl'','''||ddl||''')';
     RAISE NOTICE 'train: %', res;
 END;
 $$;
@@ -37,4 +38,4 @@ SELECT vannaRemoveTraining(:apikey,:apimodel,'154711-sql');
 SELECT vannaRemoveAllTraining(:apikey,:apimodel);
 
 -- Step X: clean up
-DROP LIBRARY VannaPyScalarFunctions CASCADE;
+--DROP LIBRARY VannaPyScalarFunctions CASCADE;

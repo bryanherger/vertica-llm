@@ -93,18 +93,15 @@ class vannaTrain(vertica_sdk.ScalarFunction):
             y = arg_reader.getString(1)
             z = arg_reader.getString(2)
             w = arg_reader.getString(3)
-            res_writer.setString('Not implemented yet.')
-            '''
-            vn = VannaDefault(model=y, api_key=x)
+            # res_writer.setString('Not implemented yet.')
             if z == 'sql':
                 res_writer.setString('Training with sql is not yet implemented.')
                 # q = vanna_api_call("https://ask.vanna.ai/rpc", x, y, 'generate_question', [{"sql":w}], 'result')
                 # res_writer.setString(vanna_api_call("https://ask.vanna.ai/rpc", x, y, 'add_question_sql', [{"question":q,"sql":w}], 'result'))
-             elif z == 'ddl':
+            elif z == 'ddl':
                 res_writer.setString(vanna_api_call("https://ask.vanna.ai/rpc", x, y, 'add_ddl', [{"data":w}], 'result'))
             else:
                 res_writer.setString(vanna_api_call("https://ask.vanna.ai/rpc", x, y, 'add_documentation', [{"data":w}], 'result'))
-            '''
             res_writer.next()
             if not arg_reader.next():
                 break
