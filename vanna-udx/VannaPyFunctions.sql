@@ -9,6 +9,7 @@ CREATE FUNCTION vannaGetTrainingDocs AS NAME 'vannaGetTrainingDocs_factory' LIBR
 CREATE FUNCTION vannaGetSql AS NAME 'vannaGetSql_factory' LIBRARY VannaPyScalarFunctions;
 CREATE FUNCTION vannaGetRawSql AS NAME 'vannaGetRawSql_factory' LIBRARY VannaPyScalarFunctions;
 CREATE FUNCTION vannaTrain AS NAME 'vannaTrain_factory' LIBRARY VannaPyScalarFunctions;
+CREATE FUNCTION vannaTrainQuestionSql AS NAME 'vannaTrainQuestionSql_factory' LIBRARY VannaPyScalarFunctions;
 CREATE FUNCTION vannaRemoveTraining AS NAME 'vannaRemoveTraining_factory' LIBRARY VannaPyScalarFunctions;
 CREATE FUNCTION vannaRemoveAllTraining AS NAME 'vannaRemoveAllTraining_factory' LIBRARY VannaPyScalarFunctions;
 
@@ -29,11 +30,12 @@ END;
 $$;
 
 -- Step 4: Use functions
-SELECT vannaGetTrainingDocs(:apikey,:apimodel);
 SELECT vannaGetSql(:apikey,:apimodel,'what was the average daily temperature at Newark in January in order by date?');
 SELECT vannaGetRawSql(:apikey,:apimodel,'create a copy of the new weather table');
-SELECT vannaTrain(:apikey,:apimodel,'sql','create a copy of the new weather table');
--- this needs to be set every time since it's API assigned and not predictable  154711-sql
+SELECT vannaTrain(:apikey,:apimodel,'sql','SELECT station_id, COUNT(*) from nwsdata group by 1');
+--SELECT vannaTrainQuestionSql(:apikey,:apimodel,'??','SQL');
+SELECT vannaGetTrainingDocs(:apikey,:apimodel);
+-- this needs to be set every time since it's API assigned and not predictable
 SELECT vannaRemoveTraining(:apikey,:apimodel,'154711-sql');
 SELECT vannaRemoveAllTraining(:apikey,:apimodel);
 

@@ -86,6 +86,30 @@ class vannaGetRawSql_factory(vertica_sdk.ScalarFunctionFactory):
     def createScalarFunction(self, srv):
         return vannaGetRawSql()
 
+class vannaTrainQuestionSql(vertica_sdk.ScalarFunction):
+    def processBlock(self, server_interface, arg_reader, res_writer):
+        while True:
+            x = arg_reader.getString(0)
+            y = arg_reader.getString(1)
+            z = arg_reader.getString(2)
+            w = arg_reader.getString(3)
+            res_writer.setString(vanna_api_call("https://ask.vanna.ai/rpc", x, y, 'add_sql', [{"question":z,"sql":w,"tag":"manual"}], 'result'))
+            res_writer.next()
+            if not arg_reader.next():
+                break
+
+class vannaTrainQuestionSql_factory(vertica_sdk.ScalarFunctionFactory):
+    def getPrototype(self, srv_interface, arg_types, return_type):
+        arg_types.addVarchar()
+        arg_types.addVarchar()
+        arg_types.addVarchar()
+        arg_types.addLongVarchar()
+        return_type.addLongVarchar()
+    def getReturnType(self, srv_interface, arg_types, return_type):
+        return_type.addLongVarchar(131072)
+    def createScalarFunction(self, srv):
+        return vannaTrainQuestionSql()
+
 class vannaTrain(vertica_sdk.ScalarFunction):
     def processBlock(self, server_interface, arg_reader, res_writer):
         while True:
@@ -93,11 +117,11 @@ class vannaTrain(vertica_sdk.ScalarFunction):
             y = arg_reader.getString(1)
             z = arg_reader.getString(2)
             w = arg_reader.getString(3)
-            # res_writer.setString('Not implemented yet.')
             if z == 'sql':
                 res_writer.setString('Training with sql is not yet implemented.')
-                # q = vanna_api_call("https://ask.vanna.ai/rpc", x, y, 'generate_question', [{"sql":w}], 'result')
-                # res_writer.setString(vanna_api_call("https://ask.vanna.ai/rpc", x, y, 'add_question_sql', [{"question":q,"sql":w}], 'result'))
+                q = vanna_api_call("https://ask.vanna.ai/rpc", x, y, 'generate_question', [{"raw_answer":"","prefix":"","postfix":"","sql":w}], 'result')
+                r = vanna_api_call("https://ask.vanna.ai/rpc", x, y, 'add_sql', [{"question":q['question'],"sql":w,"tag":"Manually Trained"}], 'result')
+                res_writer.setString(json.dumps(q) + ' ' + json.dumps(r))
             elif z == 'ddl':
                 res_writer.setString(vanna_api_call("https://ask.vanna.ai/rpc", x, y, 'add_ddl', [{"data":w}], 'result'))
             else:
