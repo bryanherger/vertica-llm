@@ -1,0 +1,2 @@
+DROP LIBRARY VannaPyScalarFunctions CASCADE;
+

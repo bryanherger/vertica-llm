@@ -22,6 +22,10 @@ def vanna_api_call(endpoint, apikey, model, method, params, whichfield):
         return content['result']
     return content
 
+def get_ddl_without_projections(ddlin):
+    ddlout = ddlin.split("CREATE PROJECTION")[0]
+    return ddlout
+
 class vannaGetTrainingDocs(vertica_sdk.ScalarFunction):
     def processBlock(self, server_interface, arg_reader, res_writer):
         while True:
@@ -123,7 +127,7 @@ class vannaTrain(vertica_sdk.ScalarFunction):
                 r = vanna_api_call("https://ask.vanna.ai/rpc", x, y, 'add_sql', [{"question":q['question'],"sql":w,"tag":"Manually Trained"}], 'result')
                 res_writer.setString(json.dumps(q) + ' ' + json.dumps(r))
             elif z == 'ddl':
-                res_writer.setString(vanna_api_call("https://ask.vanna.ai/rpc", x, y, 'add_ddl', [{"data":w}], 'result'))
+                res_writer.setString(vanna_api_call("https://ask.vanna.ai/rpc", x, y, 'add_ddl', [{"data":get_ddl_without_projections(w)}], 'result'))
             else:
                 res_writer.setString(vanna_api_call("https://ask.vanna.ai/rpc", x, y, 'add_documentation', [{"data":w}], 'result'))
             res_writer.next()
@@ -171,9 +175,12 @@ class vannaRemoveAllTraining(vertica_sdk.ScalarFunction):
             y = arg_reader.getString(1)
             t = vanna_api_call("https://ask.vanna.ai/rpc", x, y, 'get_training_data', {}, 'data')
             tj = json.loads(t)
+            allmsgs = ''
             for tji in tj:
                 server_interface.log("Will remove {}".format(tji['id']))
-            res_writer.setString("Not yet implemented")
+                allmsgs = allmsgs + str(vanna_api_call("https://ask.vanna.ai/rpc", x, y, 'remove_training_data', [{"data":tji['id']}], 'result')) + ' '
+                server_interface.log("Removed {}".format(tji['id']))
+            res_writer.setString(allmsgs)
             res_writer.next()
             if not arg_reader.next():
                 break
@@ -184,6 +191,6 @@ class vannaRemoveAllTraining_factory(vertica_sdk.ScalarFunctionFactory):
         arg_types.addVarchar()
         return_type.addVarchar()
     def getReturnType(self, srv_interface, arg_types, return_type):
-        return_type.addVarchar(64)
+        return_type.addVarchar(4096)
     def createScalarFunction(self, srv):
         return vannaRemoveAllTraining()

@@ -1,8 +1,12 @@
-\set apimodel '\''`echo $MODEL`'\''
-\set apikey '\''`echo $APIKEY`'\''
+-- Installation script: defined the shared library and the appropriate entry points
+-- Note: run this file from the package directory so $PWD below gets the correct path!
+
+select version();
+
 -- Step 1: Create library
 DROP LIBRARY IF EXISTS VannaPyScalarFunctions CASCADE;
-CREATE LIBRARY VannaPyScalarFunctions AS '/home/bryan/python/vanna-udx/VannaPyFunctions.py' LANGUAGE 'Python';
+\set libfile '\''`pwd`'/VannaPyFunctions.py\''
+CREATE LIBRARY VannaPyScalarFunctions AS :libfile LANGUAGE 'Python';
 
 -- Step 2: Create functions
 CREATE FUNCTION vannaGetTrainingDocs AS NAME 'vannaGetTrainingDocs_factory' LIBRARY VannaPyScalarFunctions;
@@ -16,30 +20,17 @@ CREATE FUNCTION vannaRemoveAllTraining AS NAME 'vannaRemoveAllTraining_factory' 
 -- Step 3: Create stored procedures to support UDX
 CREATE OR REPLACE PROCEDURE get_ddl(IN st varchar, OUT ddl varchar(64000)) LANGUAGE PLvSQL AS $$
 BEGIN
-    ddl := EXECUTE 'SELECT EXPORT_OBJECTS('''','''||st||''')'; 
+    ddl := EXECUTE 'SELECT EXPORT_OBJECTS('''','''||st||''')';
     RAISE NOTICE 'DDL: %', ddl;
 END;
 $$;
 
 CREATE OR REPLACE PROCEDURE vanna_train_ddl(IN apikey VARCHAR, IN model VARCHAR, IN st varchar, OUT ddl varchar(64000), OUT res VARCHAR(64000)) LANGUAGE PLvSQL AS $$
 BEGIN
-    ddl := EXECUTE 'SELECT EXPORT_OBJECTS('''','''||st||''')'; 
+    ddl := EXECUTE 'SELECT EXPORT_OBJECTS('''','''||st||''')';
     RAISE NOTICE 'ddl: %', ddl;
     res := EXECUTE 'SELECT vannaTrain('''||apikey||''','''||model||''',''ddl'',$1)' USING ddl;
     RAISE NOTICE 'train: %', res;
 END;
 $$;
 
--- Step 4: Use functions
-CALL vanna_train_ddl(:apikey,:apimodel,'weather.nwsdata_improved');
-SELECT vannaTrain(:apikey,:apimodel,'sql','SELECT station_id, COUNT(*) from nwsdata_improved group by 1');
---SELECT vannaTrainQuestionSql(:apikey,:apimodel,'??','SQL');
-SELECT vannaGetTrainingDocs(:apikey,:apimodel);
-SELECT vannaGetSql(:apikey,:apimodel,'what was the average daily temperature at Newark in January in order by date?');
-SELECT vannaGetRawSql(:apikey,:apimodel,'create a copy of the new weather table');
--- this needs to be set every time since it's API assigned and not predictable
-SELECT vannaRemoveTraining(:apikey,:apimodel,'154711-sql');
-SELECT vannaRemoveAllTraining(:apikey,:apimodel);
-
--- Step X: clean up
---DROP LIBRARY VannaPyScalarFunctions CASCADE;
