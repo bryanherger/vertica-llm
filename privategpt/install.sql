@@ -10,3 +10,5 @@ CREATE LIBRARY PgptPyScalarFunctions AS :libfile LANGUAGE 'Python';
 
 -- Step 2: Create functions
 CREATE FUNCTION pgptChat AS NAME 'pgptChat_factory' LIBRARY PgptPyScalarFunctions;
+CREATE FUNCTION pgptChatWithPrompt AS NAME 'pgptChatWithPrompt_factory' LIBRARY PgptPyScalarFunctions;
+CREATE FUNCTION pgptChatWithDocs AS NAME 'pgptChatWithDocs_factory' LIBRARY PgptPyScalarFunctions;
