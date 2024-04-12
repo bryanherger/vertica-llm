@@ -4,11 +4,15 @@
 select version();
 
 -- Step 1: Create library
-DROP LIBRARY IF EXISTS PgptPyScalarFunctions CASCADE;
-\set libfile '\''`pwd`'/PgptPyFunctions.py\''
-CREATE LIBRARY PgptPyScalarFunctions AS :libfile LANGUAGE 'Python';
+DROP LIBRARY IF EXISTS PrivateGptPyScalarFunctions CASCADE;
+\set libfile '\''`pwd`'/PrivateGptPyFunctions.py\''
+CREATE LIBRARY PrivateGptPyScalarFunctions AS :libfile LANGUAGE 'Python';
 
 -- Step 2: Create functions
-CREATE FUNCTION pgptChat AS NAME 'pgptChat_factory' LIBRARY PgptPyScalarFunctions;
-CREATE FUNCTION pgptChatWithPrompt AS NAME 'pgptChatWithPrompt_factory' LIBRARY PgptPyScalarFunctions;
-CREATE FUNCTION pgptChatWithDocs AS NAME 'pgptChatWithDocs_factory' LIBRARY PgptPyScalarFunctions;
+CREATE FUNCTION privateGptChat AS NAME 'privateGptChat_factory' LIBRARY PrivateGptPyScalarFunctions;
+CREATE FUNCTION privateGptChatWithPrompt AS NAME 'privateGptChatWithPrompt_factory' LIBRARY PrivateGptPyScalarFunctions;
+CREATE FUNCTION privateGptChatWithDocs AS NAME 'privateGptChatWithDocs_factory' LIBRARY PrivateGptPyScalarFunctions;
+CREATE FUNCTION privateGptChatExtended AS NAME 'privateGptChatExtended_factory' LIBRARY PrivateGptPyScalarFunctions;
+CREATE FUNCTION privateGptChatIngestDocs AS NAME 'privateGptChatIngestDocs_factory' LIBRARY PrivateGptPyScalarFunctions;
+CREATE FUNCTION privateGptChatListDocs AS NAME 'privateGptChatListDocs_factory' LIBRARY PrivateGptPyScalarFunctions;
+CREATE FUNCTION privateGptChatDeleteDocs AS NAME 'privateGptChatDeleteDocs_factory' LIBRARY PrivateGptPyScalarFunctions;

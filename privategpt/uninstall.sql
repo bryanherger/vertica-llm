@@ -1,2 +1,2 @@
-DROP LIBRARY PgptPyScalarFunctions CASCADE;
+DROP LIBRARY PrivateGptPyScalarFunctions CASCADE;
 

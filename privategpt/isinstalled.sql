@@ -3,4 +3,4 @@
 SELECT (COUNT(0) > 5) as PgptUdxInstalled
 FROM user_libraries 
 INNER JOIN user_library_manifest ON user_libraries.lib_name = user_library_manifest.lib_name
-WHERE user_library_manifest.lib_name = 'PgptPyScalarFunctions';
+WHERE user_library_manifest.lib_name = 'PrivateGptPyScalarFunctions';
