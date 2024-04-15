@@ -2,7 +2,7 @@
 This UDX package implements API calls to [PrivateGPT](https://docs.privategpt.dev/overview/welcome/introduction) allowing users to interact with PrivateGPT LLM using Vertica SQL.  
 
 Current functions are:
-- privateGptChat(endpoint, question [ USING PARAMETERS useDocs {0|1}, systemPrompt = 'VARCHAR' ] )
+- privateGptChat(endpoint, question [ USING PARAMETERS useDocs = {0|1}, systemPrompt = 'VARCHAR' ] )
    - required arguments are PrivateGPT API endpoint in the form 'http[s]://HOST:PORT' (no trailing slash) and question.
    - optional parameters are useDocs (boolean, whether to use document store to augment results), and systemPrompt (varchar, system prompt to pass to LLM)
    - returns the chat response as a long varchar.
